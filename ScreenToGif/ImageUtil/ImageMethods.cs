@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -1089,10 +1089,17 @@ namespace ScreenToGif.ImageUtil
         /// <returns>The similarity between the two frames in percentage.</returns>
         public static double CalculateDifference(FrameInfo first, FrameInfo second)
         {
-            #region Get Image Info
+            using (var imageAux1 = first.Path.From())
+            using (var imageAux2 = second.Path.From())
+            {
+                return CalculateDifference(imageAux1, imageAux2);
+            }
+        }
 
-            var imageAux1 = first.Path.From();
-            var imageAux2 = second.Path.From();
+
+        private static double CalculateDifference(Bitmap imageAux1, Bitmap imageAux2)
+        {
+            #region Get Image Info
 
             var image1 = new PixelUtilOld(imageAux1); //First image
             var image2 = new PixelUtilOld(imageAux2); //Last image
@@ -1144,8 +1151,6 @@ namespace ScreenToGif.ImageUtil
 
             image1.UnlockBits();
             image2.UnlockBits();
-
-            GC.Collect(1);
 
             return MathHelper.CrossMultiplication(width * height, equalCount, null);
         }
