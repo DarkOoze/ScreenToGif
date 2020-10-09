@@ -1122,14 +1122,15 @@ namespace ScreenToGif.ImageUtil
                 //x - width - sides
                 Parallel.For(0, width, x =>
                 {
+                    var count = 0;
+
                     //y - height - up/down
                     for (var y = 0; y < height; y++)
                     {
-                        if (image1.GetPixel(x, y) == image2.GetPixel(x, y))
-                            Interlocked.Increment(ref equalCount);
-
-                        //equalCount = equalCount + (image1.GetPixel(x, y) == image2.GetPixel(x, y) ? 1 : 0);
+                        count += (image1.GetPixel(x, y) == image2.GetPixel(x, y) ? 1 : 0);
                     }
+
+                    Interlocked.Add(ref equalCount, count);
                 });
 
                 #endregion
