@@ -68,7 +68,7 @@ namespace ScreenToGif.Util
             var task = new Task(async () =>
             {
                 //ReSharper disable once AccessToModifiedClosure
-                await Encode(project, taskId, param, cancellationTokenSource);
+                await Encode(project, taskId, param, cancellationTokenSource.Token);
 
             }, cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             taskId = task.Id;
@@ -416,7 +416,7 @@ namespace ScreenToGif.Util
 
         #region Encoding
 
-        private static async Task Encode(ExportProject project, int id, Parameters param, CancellationTokenSource tokenSource)
+        private static async Task Encode(ExportProject project, int id, Parameters param, CancellationToken token)
         {
             var processing = LocalizationHelper.Get("S.Encoder.Processing");
             var watch = new Stopwatch();
@@ -440,20 +440,20 @@ namespace ScreenToGif.Util
 
                                 if (param.EnableTransparency && param.ChromaKey.HasValue)
                                 {
-                                    ImageMethods.PaintAndCutForTransparency(project, param.TransparencyColor, param.ChromaKey.Value, id, tokenSource);
+                                    ImageMethods.PaintAndCutForTransparency(project, param.TransparencyColor, param.ChromaKey.Value, id, token);
                                 }
                                 else if (param.DetectUnchangedPixels)
                                 {
                                     if (param.ChromaKey.HasValue)
-                                        ImageMethods.PaintTransparentAndCut(project, param.ChromaKey.Value, id, tokenSource);
+                                        ImageMethods.PaintTransparentAndCut(project, param.ChromaKey.Value, id, token);
                                     else
-                                        ImageMethods.CutUnchanged(project, id, tokenSource);
+                                        ImageMethods.CutUnchanged(project, id, token);
                                 }
 
                                 Update(id, 0, watch.Elapsed);
                                 watch.Restart();
 
-                                if (tokenSource.Token.IsCancellationRequested)
+                                if (token.IsCancellationRequested)
                                 {
                                     Update(id, Status.Canceled);
                                     return;
@@ -498,7 +498,7 @@ namespace ScreenToGif.Util
 
                                                 #region Cancellation
 
-                                                if (tokenSource.Token.IsCancellationRequested)
+                                                if (token.IsCancellationRequested)
                                                 {
                                                     Update(id, Status.Canceled);
                                                     break;
@@ -542,7 +542,7 @@ namespace ScreenToGif.Util
 
                                             #region Cancellation
 
-                                            if (tokenSource.Token.IsCancellationRequested)
+                                            if (token.IsCancellationRequested)
                                             {
                                                 Update(id, Status.Canceled);
                                                 break;
@@ -571,7 +571,7 @@ namespace ScreenToGif.Util
                                 break;
                             case GifEncoderType.FFmpeg:
 
-                                EncodeWithFfmpeg("gif", project.FramesFiles, id, param, tokenSource, processing);
+                                EncodeWithFfmpeg("gif", project.FramesFiles, id, param, token, processing);
 
                                 break;
                             case GifEncoderType.Gifski:
@@ -610,7 +610,7 @@ namespace ScreenToGif.Util
                                         {
                                             #region Cancellation
 
-                                            if (tokenSource.Token.IsCancellationRequested)
+                                            if (token.IsCancellationRequested)
                                             {
                                                 Update(id, Status.Canceled);
                                                 break;
@@ -658,7 +658,7 @@ namespace ScreenToGif.Util
                                     {
                                         #region Cancellation
 
-                                        if (tokenSource.Token.IsCancellationRequested)
+                                        if (token.IsCancellationRequested)
                                         {
                                             Update(id, Status.Canceled);
                                             break;
@@ -715,9 +715,9 @@ namespace ScreenToGif.Util
                                     Update(id, 0, LocalizationHelper.Get("S.Encoder.Analyzing"));
 
                                     if (param.ChromaKey.HasValue)
-                                        project.FramesFiles = ImageMethods.PaintTransparentAndCut(project.FramesFiles, param.ChromaKey.Value, id, tokenSource);
+                                        project.FramesFiles = ImageMethods.PaintTransparentAndCut(project.FramesFiles, param.ChromaKey.Value, id, token);
                                     else
-                                        project.FramesFiles = ImageMethods.CutUnchanged(project.FramesFiles, id, tokenSource);
+                                        project.FramesFiles = ImageMethods.CutUnchanged(project.FramesFiles, id, token);
 
                                     Update(id, 0, watch.Elapsed);
                                     watch.Restart();
@@ -752,7 +752,7 @@ namespace ScreenToGif.Util
 
                                             #region Cancellation
 
-                                            if (tokenSource.Token.IsCancellationRequested)
+                                            if (token.IsCancellationRequested)
                                             {
                                                 Update(id, Status.Canceled);
                                                 break;
@@ -781,7 +781,7 @@ namespace ScreenToGif.Util
 
                             case ApngEncoderType.FFmpeg:
                             {
-                                EncodeWithFfmpeg("apng", project.FramesFiles, id, param, tokenSource, processing);
+                                EncodeWithFfmpeg("apng", project.FramesFiles, id, param, token, processing);
                                 break;
                             }
                         }
@@ -812,7 +812,7 @@ namespace ScreenToGif.Util
 
                                     #region Cancellation
 
-                                    if (tokenSource.Token.IsCancellationRequested)
+                                    if (token.IsCancellationRequested)
                                     {
                                         Update(id, Status.Canceled);
                                         break;
@@ -873,7 +873,7 @@ namespace ScreenToGif.Util
 
                                         #region Cancellation
 
-                                        if (tokenSource.Token.IsCancellationRequested)
+                                        if (token.IsCancellationRequested)
                                         {
                                             Update(id, Status.Canceled);
                                             break;
@@ -889,7 +889,7 @@ namespace ScreenToGif.Util
                             }
                             case VideoEncoderType.Ffmpg:
                             {
-                                EncodeWithFfmpeg("video", project.FramesFiles, id, param, tokenSource, processing);
+                                EncodeWithFfmpeg("video", project.FramesFiles, id, param, token, processing);
                                 break;
                             }
                             default:
@@ -928,7 +928,7 @@ namespace ScreenToGif.Util
                 }
 
                 //If it was canceled, try deleting the file.
-                if (tokenSource.Token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     if (File.Exists(param.Filename))
                         File.Delete(param.Filename);
@@ -1086,7 +1086,7 @@ namespace ScreenToGif.Util
 
                 #endregion
 
-                if (!tokenSource.Token.IsCancellationRequested)
+                if (!token.IsCancellationRequested)
                     Update(id, Status.Completed, param.Filename);
             }
             catch (Exception ex)
@@ -1120,7 +1120,7 @@ namespace ScreenToGif.Util
             }
         }
 
-        private static void EncodeWithFfmpeg(string name, List<FrameInfo> listFrames, int id, Parameters param, CancellationTokenSource tokenSource, string processing)
+        private static void EncodeWithFfmpeg(string name, List<FrameInfo> listFrames, int id, Parameters param, CancellationToken token, string processing)
         {
             #region FFmpeg encoding
 
@@ -1188,7 +1188,7 @@ namespace ScreenToGif.Util
 
                 while (!pro.StandardError.EndOfStream)
                 {
-                    if (tokenSource.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
                         pro.Kill();
                         return;
@@ -1228,7 +1228,7 @@ namespace ScreenToGif.Util
 
             if (!string.IsNullOrWhiteSpace(param.SecondPassCommand))
             {
-                log += Environment.NewLine + SecondPassFfmpeg(param.SecondPassCommand, id, tokenSource, LocalizationHelper.Get("S.Encoder.Processing.Second"));
+                log += Environment.NewLine + SecondPassFfmpeg(param.SecondPassCommand, id, token, LocalizationHelper.Get("S.Encoder.Processing.Second"));
 
                 EraseSecondPassLogs(param.Filename);
             }
@@ -1239,7 +1239,7 @@ namespace ScreenToGif.Util
             #endregion
         }
 
-        private static string SecondPassFfmpeg(string command, int id, CancellationTokenSource tokenSource, string processing)
+        private static string SecondPassFfmpeg(string command, int id, CancellationToken token, string processing)
         {
             var log = "";
 
@@ -1260,7 +1260,7 @@ namespace ScreenToGif.Util
 
                 while (!pro.StandardError.EndOfStream)
                 {
-                    if (tokenSource.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
                         pro.Kill();
                         return log;

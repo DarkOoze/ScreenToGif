@@ -42,7 +42,7 @@ namespace ScreenToGif.ImageUtil
         /// <param name="taskId">The id of the encoding task.</param>
         /// <param name="tokenSource">The cancelation token source.</param>
         /// <returns>The export project, with the images already scanned and altered.</returns>
-        public static ExportProject PaintAndCutForTransparency(ExportProject project, System.Windows.Media.Color? source, System.Windows.Media.Color chroma, int taskId, CancellationTokenSource tokenSource)
+        public static ExportProject PaintAndCutForTransparency(ExportProject project, System.Windows.Media.Color? source, System.Windows.Media.Color chroma, int taskId, CancellationToken token)
         {
             using (var oldStream = new FileStream(project.ChunkPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
@@ -52,7 +52,7 @@ namespace ScreenToGif.ImageUtil
                     {
                         #region Cancellation
 
-                        if (tokenSource.Token.IsCancellationRequested)
+                        if (token.IsCancellationRequested)
                         {
                             EncodingManager.Update(taskId, Status.Canceled);
                             break;
@@ -266,7 +266,7 @@ namespace ScreenToGif.ImageUtil
         /// <param name="taskId">The Id of the current Task.</param>
         /// <param name="tokenSource">The cancelation token source.</param>
         /// <returns>The project contaning all frames and its cut points.</returns>
-        public static ExportProject PaintTransparentAndCut(ExportProject project, System.Windows.Media.Color chroma, int taskId, CancellationTokenSource tokenSource)
+        public static ExportProject PaintTransparentAndCut(ExportProject project, System.Windows.Media.Color chroma, int taskId, CancellationToken token)
         {
             using (var oldStream = new FileStream(project.ChunkPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
@@ -278,7 +278,7 @@ namespace ScreenToGif.ImageUtil
                         {
                             #region Cancellation
 
-                            if (tokenSource.Token.IsCancellationRequested)
+                            if (token.IsCancellationRequested)
                             {
                                 EncodingManager.Update(taskId, Status.Canceled);
                                 break;
@@ -495,7 +495,7 @@ namespace ScreenToGif.ImageUtil
         /// <param name="taskId">The Id of the Task.</param>
         /// <param name="tokenSource">The cancelation token source.</param>
         /// <returns>The project contaning all frames and its cut points.</returns>
-        public static ExportProject CutUnchanged(ExportProject project, int taskId, CancellationTokenSource tokenSource)
+        public static ExportProject CutUnchanged(ExportProject project, int taskId, CancellationToken token)
         {
             using (var oldStream = new FileStream(project.ChunkPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
@@ -505,7 +505,7 @@ namespace ScreenToGif.ImageUtil
                     {
                         #region Cancellation
 
-                        if (tokenSource.Token.IsCancellationRequested)
+                        if (token.IsCancellationRequested)
                         {
                             EncodingManager.Update(taskId, Status.Canceled);
                             break;
@@ -696,7 +696,7 @@ namespace ScreenToGif.ImageUtil
         }
 
 
-        public static List<FrameInfo> PaintTransparentAndCut(List<FrameInfo> listToEncode, System.Windows.Media.Color transparent, int taskId, CancellationTokenSource tokenSource)
+        public static List<FrameInfo> PaintTransparentAndCut(List<FrameInfo> listToEncode, System.Windows.Media.Color transparent, int taskId, CancellationToken token)
         {
             //First frame rect.
             var size = listToEncode[0].Path.ScaledSize();
@@ -707,7 +707,7 @@ namespace ScreenToGif.ImageUtil
             {
                 #region Cancellation
 
-                if (tokenSource.Token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     EncodingManager.Update(taskId, Status.Canceled);
                     break;
@@ -897,7 +897,7 @@ namespace ScreenToGif.ImageUtil
             return listToEncode;
         }
 
-        public static List<FrameInfo> CutUnchanged(List<FrameInfo> listToEncode, int id, CancellationTokenSource tokenSource)
+        public static List<FrameInfo> CutUnchanged(List<FrameInfo> listToEncode, int id, CancellationToken token)
         {
             //First frame rect.
             var size = listToEncode[0].Path.ScaledSize();
@@ -908,7 +908,7 @@ namespace ScreenToGif.ImageUtil
             {
                 #region Cancellation
 
-                if (tokenSource.Token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     EncodingManager.Update(id, Status.Canceled);
                     break;
