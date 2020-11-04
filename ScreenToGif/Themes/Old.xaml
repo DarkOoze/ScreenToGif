@@ -216,7 +216,7 @@
                         <Viewbox Grid.Column="0" x:Name="ViewBoxInternal" VerticalAlignment="Center" HorizontalAlignment="Center" IsEnabled="{TemplateBinding IsEnabled}"
                                  Margin="{TemplateBinding Padding}" Width="{TemplateBinding MaxSize}" Height="{TemplateBinding MaxSize}" IsHitTestVisible="False" 
                                  Stretch="Uniform" StretchDirection="Both" MaxHeight="{TemplateBinding MaxSize}" Effect="{x:Null}">
-                            <ContentPresenter ContentSource="{TemplateBinding Content}" Width="Auto" Height="Auto" HorizontalAlignment="Center"/>
+                            <ContentPresenter Width="Auto" Height="Auto" HorizontalAlignment="Center"/>
                         </Viewbox>
 
                         <TextBlock Grid.Column="1" x:Name="TextBlockInternal" MaxWidth="{Binding Path=ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" 
@@ -277,7 +277,7 @@
                                 <Viewbox Grid.Row="0" x:Name="ViewBoxInternal" VerticalAlignment="Center" HorizontalAlignment="Center" IsEnabled="{TemplateBinding IsEnabled}"
                                          Margin="{TemplateBinding Padding}" Width="{TemplateBinding MaxSize}" Height="{TemplateBinding MaxSize}" IsHitTestVisible="False" 
                                          Stretch="Uniform" StretchDirection="Both" MaxHeight="{TemplateBinding MaxSize}" Effect="{x:Null}">
-                                    <ContentPresenter ContentSource="{TemplateBinding Content}" Width="Auto" Height="Auto" HorizontalAlignment="Center"/>
+                                    <!--<ContentPresenter ContentSource="{TemplateBinding Content}" Width="Auto" Height="Auto" HorizontalAlignment="Center"/>-->
                                 </Viewbox>
 
                                 <TextBlock Grid.Row="1" x:Name="TextBlockInternal" MaxWidth="{Binding Path=ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" 
