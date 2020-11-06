@@ -38,6 +38,9 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework) == 'net48'">
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="Resources\Style.css" />
     <Resource Include="Resources\Style.css" />

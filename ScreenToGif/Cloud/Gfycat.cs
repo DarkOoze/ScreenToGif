@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
+
 using ScreenToGif.Util;
 
 namespace ScreenToGif.Cloud
@@ -24,15 +24,13 @@ namespace ScreenToGif.Cloud
             {
                 using (var res = await client.PostAsync(@"https://api.gfycat.com/v1/gfycats", null, cancellationToken))
                 {
-                    var result = await res.Content.ReadAsStringAsync();
+                    var json = JsonDocument.Parse(await res.Content.ReadAsStringAsync()).RootElement;
                     //{"isOk":true,"gfyname":"ThreeWordCode","secret":"15alphanumerics","uploadType":"filedrop.gfycat.com"}
 
-                    var ser = new JavaScriptSerializer();
-
-                    if (!(ser.DeserializeObject(result) is Dictionary<string, object> thing))
+                    if (!json.TryGetProperty("gfyname", out JsonElement gfyname))
                         throw new Exception("It was not possible to get the gfycat name: " + res);
 
-                    var name = thing["gfyname"] as string;
+                    var name = gfyname.GetString();
 
                     using (var content = new MultipartFormDataContent())
                     {
