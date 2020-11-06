@@ -114,7 +114,7 @@ namespace ScreenToGif
                                     Util.Native.SetForegroundWindow(handles.Count > 0 ? handles[0] : process.Handle);
                                     warning = false;
 
-                                    InterProcess.SendMessage(e.Args);
+                                    InterProcess.SendMessage(process.Id, e.Args);
                                 }
                             }
 
