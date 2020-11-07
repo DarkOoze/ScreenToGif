@@ -36,7 +36,11 @@ namespace ScreenToGif.Util
             try
             {
                 var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-                var rules = Directory.GetAccessControl(directoryPath).GetAccessRules(true, true, typeof(SecurityIdentifier)).OfType<FileSystemAccessRule>().OrderBy(o => o.AccessControlType == AccessControlType.Deny);
+                var rules = new DirectoryInfo(directoryPath)
+                    .GetAccessControl()
+                    .GetAccessRules(true, true, typeof(SecurityIdentifier))
+                    .OfType<FileSystemAccessRule>()
+                    .OrderBy(o => o.AccessControlType == AccessControlType.Deny);
 
                 foreach (var rule in rules)
                 {

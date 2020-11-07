@@ -25,7 +25,7 @@ namespace ScreenToGif.Util
             var sec = new MutexSecurity();
             sec.AddAccessRule(new MutexAccessRule(Environment.UserDomainName + "\\" + Environment.UserName, MutexRights.FullControl, AccessControlType.Allow));
 
-            var mutex = new Mutex(false, @"Global\ScreenToGif" + key.Remove("\\"), out bool created, sec);
+            var mutex = new Mutex(false, @"Global\ScreenToGif" + key.Remove("\\"), out bool created);
 
             All.Add(key, mutex);
         }

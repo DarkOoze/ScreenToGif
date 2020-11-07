@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>ScreenToGif</RootNamespace>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -40,6 +41,9 @@
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework) == 'net48'">
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework) != 'net48'">
+    <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Resources\Style.css" />
