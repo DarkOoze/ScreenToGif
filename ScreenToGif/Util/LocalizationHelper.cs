@@ -8,7 +8,6 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
@@ -83,8 +82,8 @@ namespace ScreenToGif.Util
             CurrentCulture = culture;
 
             //Inform the threads of the new culture.
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture);
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+            CultureInfo.CurrentUICulture = new CultureInfo(culture);
 
             #region English Fallback of the Current Language
 
@@ -466,7 +465,7 @@ namespace ScreenToGif.Util
         /// <returns>A string resource, usually a localized string.</returns>
         public static string GetWithFormat(string key, params object[] values)
         {
-            return string.Format(Thread.CurrentThread.CurrentUICulture, Application.Current.TryFindResource(key) as string ?? "", values);
+            return string.Format(CultureInfo.CurrentUICulture, Application.Current.TryFindResource(key) as string ?? "", values);
         }
 
         /// <summary>
@@ -493,7 +492,7 @@ namespace ScreenToGif.Util
         /// <returns>A string resource, usually a localized string.</returns>
         public static string GetWithFormat(string key, string defaultValue, params object[] values)
         {
-            return string.Format(Thread.CurrentThread.CurrentUICulture, Application.Current.TryFindResource(key) as string ?? defaultValue, values);
+            return string.Format(CultureInfo.CurrentUICulture, Application.Current.TryFindResource(key) as string ?? defaultValue, values);
         }
 
         /// <summary>
